@@ -18,21 +18,21 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\GameTrunk\Assets\Plugins\</OutputPath>
+    <OutputPath>..\..\CTPTest\Assets\Plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\GameTrunk\Assets\Plugins\Support.XML</DocumentationFile>
+    <DocumentationFile>..\..\CTPTest\Assets\Plugins\Support.XML</DocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\GameTrunk\Assets\Plugins\</OutputPath>
+    <OutputPath>..\..\CTPTest\Assets\Plugins\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\GameTrunk\Assets\Plugins\Support.XML</DocumentationFile>
+    <DocumentationFile>..\..\CTPTest\Assets\Plugins\Support.XML</DocumentationFile>
     <RegisterForComInterop>false</RegisterForComInterop>
   </PropertyGroup>
   <PropertyGroup>
