@@ -1,0 +1,11 @@
+#忽略中间文件
+obj/
+#meta
+*.meta
+#vs
+*.vs
+#Dotfuscated
+Dotfuscated/
+#.user
+*.csproj.user
+Support/Support.csproj.user
