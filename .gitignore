@@ -9,3 +9,5 @@ Dotfuscated/
 #.user
 *.csproj.user
 Support/Support.csproj.user
+#Library
+Library/
