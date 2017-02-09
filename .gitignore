@@ -3,7 +3,7 @@ obj/
 #meta
 *.meta
 #vs
-*.vs
+#*.vs
 #Dotfuscated
 Dotfuscated/
 #.user
@@ -11,3 +11,5 @@ Dotfuscated/
 Support/Support.csproj.user
 #Library
 Library/
+#Temp
+Temp/

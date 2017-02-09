@@ -16,21 +16,20 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\CTPTest\Assets\Editor\</OutputPath>
+    <OutputPath>..\CTPTest\Assets\Editor\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>..\CTPTest\Assets\Editor\Editor.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\CTPTest\Assets\Editor\</OutputPath>
+    <OutputPath>..\CTPTest\Assets\Editor\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>F:\ShanHaiProject\Client\GameTrunk\Assets\Editor\Editor.XML</DocumentationFile>
+    <DocumentationFile>..\CTPTest\Assets\Editor\Editor.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>

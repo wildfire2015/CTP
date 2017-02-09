@@ -24,7 +24,7 @@ public class OpenVS
             System.Diagnostics.Process process = System.Diagnostics.Process.Start(mainpath);
             process.WaitForExit();
         }
-        string nativepath = Directory.GetParent(System.Environment.CurrentDirectory) + "\\CTP\\CTP.sln";
+        string nativepath = Directory.GetParent(System.Environment.CurrentDirectory) + "\\CTP.sln";
         if (File.Exists(nativepath))
         {
             System.Diagnostics.Process process = System.Diagnostics.Process.Start(nativepath);
