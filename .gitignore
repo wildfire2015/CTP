@@ -3,7 +3,7 @@ obj/
 #meta
 *.meta
 #vs
-#*.vs
+*.vs
 #Dotfuscated
 Dotfuscated/
 #.user
