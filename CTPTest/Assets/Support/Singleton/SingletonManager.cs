@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Reflection;
+
 namespace PSupport
 {
     namespace PSingleton
@@ -36,7 +38,7 @@ namespace PSupport
             /// </summary>
             /// <param name="sInstanceName"></param>
             /// <param name="instance"></param>
-            internal static void _addInstance(string sInstanceName,object instance)
+            internal static void _addInstance(string sInstanceName, object instance)
             {
                 if (instance.GetType().IsAssignableFrom(typeof(MonoBehaviour)))
                 {//如果是MonoBehaviour的实例
@@ -46,6 +48,26 @@ namespace PSupport
                         Object.DontDestroyOnLoad(mgMonoContainer);
                     }
                 }
+                if (!mDicSingletonMap.ContainsKey(sInstanceName))
+                {
+                    mDicSingletonMap.Add(sInstanceName, instance);
+                }
+            }
+            /// <summary>
+            /// 增加非mono单例实例
+            /// </summary>
+            /// <param name="sInstanceName"></param>
+            /// <param name="instance"></param>
+            internal static T _addMonoInstance<T>() where T:MonoBehaviour
+            {
+                T instance = null;
+                if (mgMonoContainer == null)
+                {
+                    mgMonoContainer = new GameObject(msContainerName);
+                    Object.DontDestroyOnLoad(mgMonoContainer);
+                }
+                instance = mgMonoContainer.AddComponent<T>();
+
                 if (!mDicSingletonMap.ContainsKey(sInstanceName))
                 {
                     mDicSingletonMap.Add(sInstanceName, instance);
@@ -62,11 +84,22 @@ namespace PSupport
                     object instance = mDicSingletonMap[sInstanceName];
                     if (instance != null)
                     {
-                        if (instance.GetType().IsAssignableFrom(typeof(MonoBehaviour)))
+                        System.Type type = System.Type.GetType(sInstanceName);
+                        System.Type typebase = typeof(Singleton<>);
+                        typebase = typebase.MakeGenericType(type);
+                        //清理对应类的静态实例对象
+                        FieldInfo proinfo = typebase.GetField("msInstance", BindingFlags.NonPublic | BindingFlags.Static);
+                        if (proinfo != null)
+                        {
+                            Debug.Log("清理单例实例" + typebase.FullName);
+                            proinfo.SetValue(instance, null);
+                        }
+                        if (type.IsAssignableFrom(typeof(MonoBehaviour)))
                         {//如果是MonoBehaviour的实例
                             Object.Destroy((Object)instance);
                         }
                         mDicSingletonMap.Remove(sInstanceName);
+                        
                     }
                     
                 }
@@ -80,6 +113,11 @@ namespace PSupport
                 {
                     Object.Destroy(mgMonoContainer);
                     mgMonoContainer = null;
+                }
+                Dictionary<string, object>.Enumerator it = mDicSingletonMap.GetEnumerator();
+                while (it.MoveNext())
+                {
+                    removeInstance(it.Current.Key);
                 }
                 mDicSingletonMap.Clear();
             }

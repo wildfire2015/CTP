@@ -11,7 +11,7 @@ namespace PSupport
         /// 多线程安全泛型单例类,派生类必须实现私有默认构造函数
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        public class Single<T> where T : class
+        public class Singleton<T> where T : class
         {
             //private Single() { }
             /// <summary>
@@ -45,19 +45,20 @@ namespace PSupport
                         {//double-check
                             if (msInstance == null)
                             {
-                                msTName = typeof(T).Name;
+                                msTName = typeof(T).FullName;
                                 ConstructorInfo Constructor = typeof(T).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, msEmptyTypes, null);
                                 if (Constructor == null)
                                 {
                                     throw new System.InvalidOperationException(string.Format("The constructor for {0} must be private and take no parameters.", typeof(T)));
                                 }
+                                Debug.Log("创建单例实例" + typeof(T).FullName);
                                 msInstance = (T)Constructor.Invoke(null);
                             }
-                            SingletonManager._addInstance(msTName, msInstance);
+                            
                         }
 
                     }
-
+                    SingletonManager._addInstance(msTName, msInstance);
                     return msInstance;
 
                 }
@@ -67,7 +68,6 @@ namespace PSupport
             /// </summary>
             public static void ReleaseInstance()
             {
-                msInstance = null;
                 SingletonManager.removeInstance(msTName);
             }
 

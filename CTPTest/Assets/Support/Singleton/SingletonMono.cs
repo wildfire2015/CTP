@@ -19,7 +19,7 @@ namespace PSupport
                 {
                     if (msInstance == null)
                     {
-                        msTName = typeof(T).Name;
+                        msTName = typeof(T).FullName;
                         msInstance = SingletonManager.mgMonoContainer.AddComponent<T>();
                         if (msInstance == null)
                         {
@@ -42,7 +42,6 @@ namespace PSupport
             }
             public static void ReleaseInstance()
             {
-                msInstance = null;
                 SingletonManager.removeInstance(msTName);
             }
 

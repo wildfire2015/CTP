@@ -13,7 +13,7 @@ namespace PSupport
         /// 修改:
         /// 备注:多线程资源加载管理器,管理资源加载过程中要处理的bundle加载,释放,回调,资源的删除等操作
         /// </summary>
-        public class MTResourceLoadManager : Single<MTResourceLoadManager>
+        public class MTResourceLoadManager : Singleton<MTResourceLoadManager>
         {
             private MTResourceLoadManager() { }
             public int a = 1;
