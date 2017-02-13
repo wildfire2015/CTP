@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using PSupport.PSingleton;
 
 /*******************************************************************************
  * 
@@ -1544,7 +1545,7 @@ namespace PSupport
 
                 LoadAsset.getInstance().StopAllCoroutines();
                 LoadAsset.getInstance().reset();
-                SingleMono.RemoveInstance("LoadAsset");
+                SingletonManager.removeInstance("LoadAsset");
                 CacheBundleInfo.reset();
             }
 
@@ -1554,7 +1555,7 @@ namespace PSupport
             /// <returns></returns>
             static public void startUnloadUnusedAssetAndGC()
             {
-                if (mbuseassetbundle == true && SingleMono.IsCreatedInstance("LoadAsset"))
+                if (mbuseassetbundle == true && SingletonManager.isCreatedInstance("LoadAsset"))
                 {
                     mbStartDoUnload = true;
                 }

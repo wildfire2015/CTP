@@ -25,7 +25,7 @@ namespace PSupport
             //static List<Object> _mListReleasedObjects = new List<Object>();
             static public LoadAsset getInstance()
             {
-                return SingleMono.getInstance<LoadAsset>() as LoadAsset;
+                return null;//SingletonMono.getMonoInstance<LoadAsset>() as LoadAsset;
             }
             public void loadAsset(string sAssetPath, eLoadResPath eloadrespath, string sInputPath, System.Type type,
                 string tag, string sResGroupkey, string md5, bool basyn, bool bNoUseCatching,
