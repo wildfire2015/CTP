@@ -2,6 +2,7 @@
 using System.Collections;
 using PSupport;
 using PSupport.MTLoadSystem;
+using PSupport.PSingleton;
 
 public class Launcher : MonoBehaviour {
 
@@ -15,11 +16,13 @@ public class Launcher : MonoBehaviour {
         o = MTResourceLoadManager.instance;
         //MTResourceLoadManager.ReleaseInstance();
         o = MTResourceLoadManager.instance;
-        //MTResourceLoadManager.ReleaseInstance();
+        MTResourceLoadManager.ReleaseInstance();
         o = MTResourceLoadManager.instance;
 
         testsinglemono tm = testsinglemono.instance;
         testsinglemono.ReleaseInstance();
+        MTResourceLoadManager.ReleaseInstance();
+        //SingletonManager.clear();
     }
 	
 	// Update is called once per frame

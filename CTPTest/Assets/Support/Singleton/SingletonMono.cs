@@ -20,12 +20,12 @@ namespace PSupport
                     if (msInstance == null)
                     {
                         msTName = typeof(T).FullName;
-                        msInstance = SingletonManager.mgMonoContainer.AddComponent<T>();
+                        msInstance = SingletonManager._addMonoInstance<T>();
                         if (msInstance == null)
                         {
                             throw new System.InvalidOperationException(string.Format("The SingleTon MonoBehaviour for {0} create failed!", msTName));
                         }
-                        SingletonManager._addInstance(msTName, msInstance);
+                        
                     }
                     return msInstance;
                 }
@@ -36,7 +36,7 @@ namespace PSupport
                 if (gameObject.name != SingletonManager.msContainerName)
                 {//如果单例mono类加入到其他物体上,则强制删除
                     ReleaseInstance();
-                    throw new System.InvalidOperationException(string.Format("The SingleTon MonoBehaviour for {0} can only be unique", typeof(T)));
+                    throw new System.InvalidOperationException(string.Format("The SingleTon MonoBehaviour for {0} can only be create in sington", typeof(T)));
                     
                 }
             }

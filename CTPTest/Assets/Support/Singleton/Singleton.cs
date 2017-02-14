@@ -13,7 +13,7 @@ namespace PSupport
         /// <typeparam name="T"></typeparam>
         public class Singleton<T> where T : class
         {
-            //private Single() { }
+            //private Singleton() { }
             /// <summary>
             /// 单例实例
             /// </summary>
@@ -51,14 +51,13 @@ namespace PSupport
                                 {
                                     throw new System.InvalidOperationException(string.Format("The constructor for {0} must be private and take no parameters.", typeof(T)));
                                 }
-                                Debug.Log("创建单例实例" + typeof(T).FullName);
                                 msInstance = (T)Constructor.Invoke(null);
                             }
                             
                         }
 
                     }
-                    SingletonManager._addInstance(msTName, msInstance);
+                    SingletonManager._addInstance(msTName);
                     return msInstance;
 
                 }

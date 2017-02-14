@@ -19,15 +19,15 @@ namespace PSupport
             /// <summary>
             /// 容器名字名字
             /// </summary>
-            internal static string msContainerName = "SingletonMono";
+            internal static string msContainerName = "SingletonManager";
             /// <summary>
             /// 用来存储单例对象的容器
             /// </summary>
-            private  static Dictionary<string, object> mDicSingletonMap = new Dictionary<string, object>();
+            private  static List<string> mListSingleton = new List<string>();
 
             public static bool isCreatedInstance(string sInstanceName)
             {
-                if (mDicSingletonMap != null && mDicSingletonMap.ContainsKey(sInstanceName))
+                if (mListSingleton != null && mListSingleton.Contains(sInstanceName))
                 {
                     return true;
                 }
@@ -38,9 +38,9 @@ namespace PSupport
             /// </summary>
             /// <param name="sInstanceName"></param>
             /// <param name="instance"></param>
-            internal static void _addInstance(string sInstanceName, object instance)
+            internal static void _addInstance(string sInstanceName)
             {
-                if (instance.GetType().IsAssignableFrom(typeof(MonoBehaviour)))
+                if (System.Type.GetType(sInstanceName).IsAssignableFrom(typeof(MonoBehaviour)))
                 {//如果是MonoBehaviour的实例
                     if (mgMonoContainer == null)
                     {
@@ -48,9 +48,9 @@ namespace PSupport
                         Object.DontDestroyOnLoad(mgMonoContainer);
                     }
                 }
-                if (!mDicSingletonMap.ContainsKey(sInstanceName))
+                if (!mListSingleton.Contains(sInstanceName))
                 {
-                    mDicSingletonMap.Add(sInstanceName, instance);
+                    mListSingleton.Add(sInstanceName);
                 }
             }
             /// <summary>
@@ -67,11 +67,15 @@ namespace PSupport
                     Object.DontDestroyOnLoad(mgMonoContainer);
                 }
                 instance = mgMonoContainer.AddComponent<T>();
-
-                if (!mDicSingletonMap.ContainsKey(sInstanceName))
+                if (instance != null)
                 {
-                    mDicSingletonMap.Add(sInstanceName, instance);
+                    string typename = typeof(T).FullName;
+                    if (!mListSingleton.Contains(typename))
+                    {
+                        mListSingleton.Add(typename);
+                    }
                 }
+                return instance;
             }
             /// <summary>
             /// 删除实例
@@ -79,29 +83,40 @@ namespace PSupport
             /// <param name="sInstanceName"></param>
             public static void removeInstance(string sInstanceName)
             {
-                if (mDicSingletonMap.ContainsKey(sInstanceName))
+                if (mListSingleton.Contains(sInstanceName))
                 {
-                    object instance = mDicSingletonMap[sInstanceName];
-                    if (instance != null)
+                    System.Type type = System.Type.GetType(sInstanceName);
+                    System.Type typebase = null;
+                    bool bIsMono = type.IsSubclassOf(typeof(MonoBehaviour));
+                    if (bIsMono)
+                    {//如果是MonoBehaviour的实例
+                        typebase = typeof(SingletonMono<>);
+                        Component c = mgMonoContainer.GetComponent(sInstanceName);
+                        Object.Destroy(c);
+                    }
+                    else
                     {
-                        System.Type type = System.Type.GetType(sInstanceName);
-                        System.Type typebase = typeof(Singleton<>);
-                        typebase = typebase.MakeGenericType(type);
-                        //清理对应类的静态实例对象
-                        FieldInfo proinfo = typebase.GetField("msInstance", BindingFlags.NonPublic | BindingFlags.Static);
-                        if (proinfo != null)
-                        {
-                            Debug.Log("清理单例实例" + typebase.FullName);
-                            proinfo.SetValue(instance, null);
-                        }
-                        if (type.IsAssignableFrom(typeof(MonoBehaviour)))
-                        {//如果是MonoBehaviour的实例
-                            Object.Destroy((Object)instance);
-                        }
-                        mDicSingletonMap.Remove(sInstanceName);
-                        
+                        typebase = typeof(Singleton<>);
+                    }
+                    typebase = typebase.MakeGenericType(type);
+                    //清理对应类的静态实例对象
+                    FieldInfo proinfo = typebase.GetField("msInstance", BindingFlags.NonPublic | BindingFlags.Static);
+                    if (proinfo != null)
+                    {
+                        ConstructorInfo Constructor = typebase.GetConstructor(BindingFlags.Public | BindingFlags.Instance, null, new System.Type[0], null);
+                        object instance = Constructor.Invoke(null);
+                        proinfo.SetValue(instance, null);
                     }
                     
+                    mListSingleton.Remove(sInstanceName);
+                    if (mListSingleton.Count == 0)
+                    {
+                        if (mgMonoContainer != null)
+                        {
+                            Object.Destroy(mgMonoContainer);
+                            mgMonoContainer = null;
+                        }
+                    }
                 }
             }
             /// <summary>
@@ -109,17 +124,11 @@ namespace PSupport
             /// </summary>
             public static void clear()
             {
-                if (mgMonoContainer != null)
+                string[] singletons = mListSingleton.ToArray();
+                for (int i = 0; i < singletons.Length; i++)
                 {
-                    Object.Destroy(mgMonoContainer);
-                    mgMonoContainer = null;
+                    removeInstance(singletons[i]);
                 }
-                Dictionary<string, object>.Enumerator it = mDicSingletonMap.GetEnumerator();
-                while (it.MoveNext())
-                {
-                    removeInstance(it.Current.Key);
-                }
-                mDicSingletonMap.Clear();
             }
 
         }
