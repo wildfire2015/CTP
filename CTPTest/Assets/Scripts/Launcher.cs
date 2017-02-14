@@ -10,19 +10,6 @@ public class Launcher : MonoBehaviour {
 	void Start ()
     {
         MTResourceLoadManager o = MTResourceLoadManager.instance;
-        //MTResourceLoadManager.ReleaseInstance();
-        o = MTResourceLoadManager.instance;
-        //MTResourceLoadManager.ReleaseInstance();
-        o = MTResourceLoadManager.instance;
-        //MTResourceLoadManager.ReleaseInstance();
-        o = MTResourceLoadManager.instance;
-        MTResourceLoadManager.ReleaseInstance();
-        o = MTResourceLoadManager.instance;
-
-        testsinglemono tm = testsinglemono.instance;
-        testsinglemono.ReleaseInstance();
-        MTResourceLoadManager.ReleaseInstance();
-        //SingletonManager.clear();
     }
 	
 	// Update is called once per frame

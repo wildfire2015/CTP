@@ -16,7 +16,6 @@ namespace PSupport
         public class MTResourceLoadManager : Singleton<MTResourceLoadManager>
         {
             private MTResourceLoadManager() { }
-            public int a = 1;
         }
 
     }
