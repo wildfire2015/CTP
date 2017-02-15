@@ -15,5 +15,4 @@ Library/
 #Temp
 Temp/
 #StreamingAssets
-#!/CTPTest/Assets/StreamingAssets
-#CTPTest/Assets/StreamingAssets/*
+CTPTest/Assets/StreamingAssets/*
