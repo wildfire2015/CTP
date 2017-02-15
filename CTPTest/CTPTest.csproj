@@ -64,6 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Launcher.cs" />
+    <Compile Include="Assets\Scripts\LoadInfo.cs" />
+    <Compile Include="Assets\Scripts\roundcube.cs" />
     <Compile Include="Assets\Scripts\testsinglemono.cs" />
     <Compile Include="Assets\Support\7zip\Common\CRC.cs" />
     <Compile Include="Assets\Support\7zip\Common\CommandLineParser.cs" />

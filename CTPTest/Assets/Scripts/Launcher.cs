@@ -6,14 +6,18 @@ using PSupport.PSingleton;
 
 public class Launcher : MonoBehaviour {
 
-	// Use this for initialization
-	void Start ()
+    LoadInfo mloadinfo = null;
+
+    // Use this for initialization
+    void Start ()
     {
+        mloadinfo = FindObjectOfType<LoadInfo>();
         MTResourceLoadManager o = MTResourceLoadManager.instance;
     }
 	
 	// Update is called once per frame
-	void Update () {
-	
-	}
+	void Update ()
+    {
+
+    }
 }
