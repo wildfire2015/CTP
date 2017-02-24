@@ -91,7 +91,9 @@
     <Compile Include="Assets\Support\LoadSystem\LoadAsset.cs" />
     <Compile Include="Assets\Support\LoadSystem\ResourceLoadManager.cs" />
     <Compile Include="Assets\Support\LoadSystem\Timing.cs" />
+    <Compile Include="Assets\Support\MTLoadSystem\MTLoadAsset.cs" />
     <Compile Include="Assets\Support\MTLoadSystem\MTResourceLoadManager.cs" />
+    <Compile Include="Assets\Support\NotificationCenter.cs" />
     <Compile Include="Assets\Support\Singleton\Singleton.cs" />
     <Compile Include="Assets\Support\Singleton\SingletonManager.cs" />
     <Compile Include="Assets\Support\Singleton\SingletonMono.cs" />
