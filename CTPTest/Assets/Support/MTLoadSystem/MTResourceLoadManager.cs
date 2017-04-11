@@ -324,7 +324,7 @@ namespace PSupport
                 sw.Close();
             }
             /// <summary>
-            /// 更新/增加内存 中的Cache信息
+            /// 更新/增加 内存中的Cache信息
             /// </summary>
             /// <param name="path"></param>
             /// <param name="sMD5"></param>
