@@ -7,6 +7,15 @@ using UnityEngine;
 
 namespace PSupport
 {
+    /// <summary>
+    /// 多线程加载模块,该模块要负责资源的加载和管理,提供简洁的加载接口
+    /// 1.支持多线程加载
+    /// 2.支持unity的异步,同步加载
+    /// 3.支持加载完毕自动释放bundle的开关
+    /// 4.支持本地资源读取和bundle读取的一键切换
+    /// 5.非调试模式下占用mono内存小
+    /// 6.调试模式能方便调试查看信息
+    /// </summary>
     namespace MTLoadSystem
     {
 
@@ -42,7 +51,18 @@ namespace PSupport
                 /// <summary>
                 /// StreamingAssets 路径
                 /// </summary>
-                public string msStreamingAssetsPath = "";
+                /// 
+                public string msResourcesPath_Local = string.Empty;
+                /// <summary>
+                /// 资源服务器URL 路径
+                /// </summary>
+                public string msResourcesPath_URL = string.Empty;
+
+                /// <summary>
+                /// 读取路径模式,如果设置了读取相关模式,必须保证相关 msResourcesPath_XXX 不为空
+                /// </summary>
+                public eLoadResPathSetting meLoadResSetting = eLoadResPathSetting.LRS_EmptyAddress;
+
                 /// <summary>
                 /// 资源Cache目录标志,在固定的cache目录中,可自定义选择那个cache文件夹下为cache目录
                 /// </summary>
@@ -62,6 +82,7 @@ namespace PSupport
             /// 本地bundle配置信息
             /// </summary>
             internal static BundleInfoConfig _mLocalBundleInfoConfig = null;
+
 
             /// <summary>
             /// 已经加载完的资源
@@ -90,7 +111,11 @@ namespace PSupport
                 }
             }
 
-
+            /// <summary>
+            /// 将streaming下的bundle解压到cache目录下,如果是多线程读取,必须先调用此接口
+            /// </summary>
+            /// <param name="proc"></param>
+            /// <param name="o"></param>
             public void UnCompressStreamingPathToCache(ProcessDelegateArgc proc = null, object o = null)
             {
 
@@ -138,7 +163,28 @@ namespace PSupport
         #endregion
 
         #region 命名空间下的枚举和类
-
+        /// <summary>
+        /// 读取路径模式设置
+        /// </summary>
+        public enum eLoadResPathSetting
+        {
+            /// <summary>
+            /// 只读取StreamingAssets的资源
+            /// </summary>
+            LRS_ReadStreamingOnly,
+            /// <summary>
+            /// 只读取URL的资源
+            /// </summary>
+            LRS_ReadURLOnly,
+            /// <summary>
+            /// 优先读取URL的资源,如果cache中有就读cache,没有就看StreamingAssetsPath中有不有,如果没有,就从URL上下载到cache中再读取
+            /// </summary>
+            LRS_ReadURLForUpdate,
+            /// <summary>
+            /// 没有配置资源路径
+            /// </summary>
+            LRS_EmptyAddress,
+        }
 
         /// <summary>
         /// 加载结果
@@ -146,11 +192,11 @@ namespace PSupport
         public enum eLoadedNotify
         {
             /// <summary>
-            /// 加载一个失败
+            /// 加载某一个失败
             /// </summary>
             Load_OneFailed,
             /// <summary>
-            /// 加载一个成功
+            /// 加载某一个成功
             /// </summary>
             Load_OneSuccessfull,
             /// <summary>
@@ -177,7 +223,7 @@ namespace PSupport
             /// </summary>
             RP_FromStreamingAssets,
             /// <summary>
-            /// 读取网络路径,没有就从读取本地StreamingAssets下的资源里读取
+            /// 读取网络路径,先从cache中读取,没有就从读取本地StreamingAssets下的资源里读取,如果还没有,则从网络下载到cache
             /// </summary>
             RP_FromURLFirst,
             /// <summary>

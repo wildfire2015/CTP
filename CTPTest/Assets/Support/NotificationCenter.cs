@@ -17,7 +17,7 @@ namespace PSupport
         private Dictionary<string, SenderTable> _mtable = new Dictionary<string, SenderTable>();
         private HashSet<List<MsgHandler>> _minvoking = new HashSet<List<MsgHandler>>();
 
-        public NotificationCenter() { }
+        private NotificationCenter() { }
 
         /// <summary>
         /// 添加一个观察者，不指定发送者，发送者默认为NotificationCenter
