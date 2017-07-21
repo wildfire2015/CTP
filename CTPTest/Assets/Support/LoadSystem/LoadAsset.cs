@@ -25,7 +25,7 @@ namespace PSupport
             //static List<Object> _mListReleasedObjects = new List<Object>();
             static public LoadAsset getInstance()
             {
-                return null;//SingletonMono.getMonoInstance<LoadAsset>() as LoadAsset;
+                return null; //SingleMono.getInstance<LoadAsset>() as LoadAsset;
             }
             public void loadAsset(string sAssetPath, eLoadResPath eloadrespath, string sInputPath, System.Type type,
                 string tag, string sResGroupkey, string md5, bool basyn, bool bNoUseCatching,
@@ -57,19 +57,20 @@ namespace PSupport
                 string assetsbundlepath;
                 string assetname;
                 string sinputbundlename;
+                string sinputbundlenamewithoutpostfix;
                 if (sAssetPath.Contains("|"))
                 {
                     assetsbundlepath = sAssetPath.Split('|')[0];
                     assetname = sAssetPath.Split('|')[1];
-                    sinputbundlename = Path.GetDirectoryName(sInputPath);
+                    sinputbundlenamewithoutpostfix = Path.GetDirectoryName(sInputPath);
+                    sinputbundlename = sinputbundlenamewithoutpostfix + ResourceLoadManager.msBundlePostfix;
                 }
                 else
                 {//没有'|',表示只是加载assetbundle,不加载里面的资源(例如场景Level对象,依赖assetbundle)
                     assetsbundlepath = sAssetPath;
                     assetname = string.Empty;
-                    sinputbundlename = sInputPath;
-
-
+                    sinputbundlenamewithoutpostfix = sInputPath;
+                    sinputbundlename = sInputPath + ResourceLoadManager.msBundlePostfix;
                 }
                 //CLog.Log("start to load===" + assetname);
 
@@ -141,7 +142,7 @@ namespace PSupport
                     {
                         if (ResourceLoadManager._mbNotDownLoad == true)
                         {//如果设置了不下载资源
-                            if (CacheBundleInfo.hasBundle(sinputbundlename))
+                            if (CacheBundleInfo.hasBundle(sinputbundlenamewithoutpostfix))
                             {//如果caching有同名文件,从caching里直接读取
                              //下载路径
                                 finalloadbundlepath = Application.persistentDataPath + "/bundles/" + ResourceLoadManager.msCachingPath + "/" + sinputbundlename;
@@ -152,7 +153,7 @@ namespace PSupport
                             }
                         }
                         //检查cache配置,如果还没有,或者不使用caching,则从资源服务器下载该bundle
-                        else if (!CacheBundleInfo.isCaching(sinputbundlename, md5.ToString()) || bNoUseCatching)
+                        else if (!CacheBundleInfo.isCaching(sinputbundlenamewithoutpostfix, md5.ToString()) || bNoUseCatching)
                         {
                             DLoger.Log("WebRquest开始下载bundle:=" + sAssetbundlepath);
                             UnityWebRequest webrequest = UnityWebRequest.Get(sAssetbundlepath);
@@ -211,7 +212,7 @@ namespace PSupport
                                     fs.Dispose();
 
                                     //写入caching配置
-                                    CacheBundleInfo.updateBundleInfo(sinputbundlename, md5.ToString());
+                                    CacheBundleInfo.updateBundleInfo(sinputbundlenamewithoutpostfix, md5.ToString());
                                     CacheBundleInfo.saveBundleInfo();
                                     DLoger.Log("成功写入Caching:bundle:=" + finalloadbundlepath);
                                 }
@@ -251,7 +252,7 @@ namespace PSupport
 
 
                         }
-                        else if (CacheBundleInfo.isCaching(sinputbundlename, md5.ToString()))
+                        else if (CacheBundleInfo.isCaching(sinputbundlenamewithoutpostfix, md5.ToString()))
                         {
                             //下载路径
                             finalloadbundlepath = Application.persistentDataPath + "/bundles/" + ResourceLoadManager.msCachingPath + "/" + sinputbundlename;
@@ -260,7 +261,7 @@ namespace PSupport
                     }
                     else if (eloadrespath == eLoadResPath.RP_Caching)
                     {
-                        if (CacheBundleInfo.hasBundle(sinputbundlename))
+                        if (CacheBundleInfo.hasBundle(sinputbundlenamewithoutpostfix))
                         {//如果caching有同名文件,从caching里直接读取
                             //下载路径
                             finalloadbundlepath = Application.persistentDataPath + "/bundles/" + ResourceLoadManager.msCachingPath + "/" + sinputbundlename;
@@ -545,9 +546,10 @@ namespace PSupport
             void Update()
             {
                 _LoadAssetList();
-                _releaseResLoop();
-                _waitForGCComplete();
+                //_releaseResLoop();
                 _unloadBundleRun();
+               // _waitForGCComplete();
+                
 
             }
             /// <summary>
@@ -574,7 +576,7 @@ namespace PSupport
                     //{
                     //这里释放所有未引用的资源,因为Resources.UnloadAsset会导致unity editor crash,可能是unity5.4的bug
 
-                    ResourceLoadManager._beginUnloadUnUsedAssets();
+                    //ResourceLoadManager._beginUnloadUnUsedAssets();
 
 
                     //}
@@ -589,32 +591,34 @@ namespace PSupport
             {
                 //while (true)
                 //{
-                if (ResourceLoadManager.mbUnLoadUnUsedResDone == false || ResourceLoadManager.mbStartDoUnload == true)
+                if (ResourceLoadManager._mbUnLoadUnUsedResDone == false && ResourceLoadManager.mbStartDoUnload == true)
                 {
-                    if (ResourceLoadManager.mbStartDoUnload == true)
+                    
+                    if (_mao == null)
                     {
-                        if (mao == null)
-                        {
-                            DLoger.Log("开始执行 Resources.UnloadUnusedAssets()");
-                            ResourceLoadManager._mListReleasedObjects.Clear();
-                            mao = Resources.UnloadUnusedAssets();
-                        }
-
-                        if (mao.isDone)
-                        {
-                            DLoger.Log("====开始GC====");
-                            System.GC.Collect();
-                            //System.GC.WaitForPendingFinalizers();
-                            System.GC.Collect();
-                            //System.GC.WaitForPendingFinalizers();
-                            DLoger.Log("====GC完毕====");
-                            ResourceLoadManager.mbStartDoUnload = false;
-                            ResourceLoadManager.mbUnLoadUnUsedResDone = true;
-                            mao = null;
-                        }
-
-
+                        DLoger.Log("开始执行 Resources.UnloadUnusedAssets()");
+                        ResourceLoadManager._mListReleasedObjects.Clear();
+                        _mao = Resources.UnloadUnusedAssets();
+                        //_mfunloadtime = Time.time;
                     }
+
+                    if (_mao.isDone /*|| Time.time - _mfunloadtime > 3.0f*/)
+                    {
+                        DLoger.Log("====开始GC====");
+                        System.GC.Collect();
+                        //System.GC.WaitForPendingFinalizers();
+                        System.GC.Collect();
+                        //System.GC.WaitForPendingFinalizers();
+                        DLoger.Log("====GC完毕====");
+                        ResourceLoadManager.mbStartDoUnload = false;
+                        ResourceLoadManager._mbUnLoadUnUsedResDone = true;
+                        _mao = null;
+                        //_mfunloadtime = 0;
+                    }
+                    //else
+                    //{
+                    //    DLoger.LogWarning("Resources.UnloadUnusedAssets() 正在等待!");
+                    //}
 
                 }
                 //yield return 1;
@@ -684,7 +688,8 @@ namespace PSupport
                                 //DLoger.Log(mDicLoadedWWW.Count + "," + mDicLoadingWWW.Count);
                             }
                         }
-                        if (ResourceLoadManager.checkBundleReleased() && _miloadingAssetNum == 0)
+                        bool bbundlereleased = ResourceLoadManager.checkBundleReleased();
+                        if (bbundlereleased && _miloadingAssetNum == 0)
                         {//非常驻bundle都释放,并且没有正在加载的协程
                             if (ResourceLoadManager._mSetRemovedObjects.Count != 0)
                             {
@@ -694,12 +699,32 @@ namespace PSupport
                                     ResourceLoadManager._removeRes(ithash.Current);
                                 }
                                 ResourceLoadManager._mSetRemovedObjects.Clear();
-                                //如果这里调用在GC完毕之后,会有逻辑层判断是否GC完毕卡死的风险,故而不能在这里调用
-                                //ResourceLoadManager._beginUnloadUnUsedAssets();
                                 DLoger.Log("DestroyImmediate Objects 完毕!");
                             }
-                           
+                            //如果这里调用在GC完毕之后,会有逻辑层判断是否GC完毕卡死的风险,故而不能在这里调用,但是现在把 _waitForGCComplete()
+                            //放到同一桢的统一函数内部,保证调用次序,所以这里可以加上
+
+                            ResourceLoadManager._beginUnloadUnUsedAssets();
+
+                            List<Object> listReleasedObjects = ResourceLoadManager._mListReleasedObjects;
+                            if (listReleasedObjects.Count > 0)
+                            {
+
+                                for (int i = 0; i < listReleasedObjects.Count; i++)
+                                {
+                                    Resources.UnloadAsset(listReleasedObjects[i]);
+                                }
+                                listReleasedObjects.Clear();
+                                //Resources.UnloadUnusedAssets();
+
+                            }
+
                         }
+                        else
+                        {
+                            DLoger.Log("bundle没有释放完,或者加载Asset没有完毕!:" + bbundlereleased + ":" + _miloadingAssetNum);
+                        }
+                        _waitForGCComplete();
 
                     }
 
@@ -748,7 +773,7 @@ namespace PSupport
             internal void reset()
             {
                 _mDicAssetNum = new Dictionary<string, int>();
-                mao = null;
+                _mao = null;
                 _mDicLoadingAssets = new Dictionary<string, AssetBundleRequest>();
                 _mDicLoadingAssetstime = new Dictionary<string, float>();
                 _mListLoadingRequest = new List<Hashtable>();
@@ -758,8 +783,11 @@ namespace PSupport
             private Dictionary<string, int> _mDicAssetNum = new Dictionary<string, int>();
             //记录同一assetsbundle加载协程的个数
             //private Dictionary<string, Hashtable> _mDicbundleNum = new Dictionary<string, Hashtable>();
-
-            AsyncOperation mao = null;
+            /// <summary>
+            /// unload异步等待
+            /// </summary>
+            private AsyncOperation _mao = null;
+            //private float _mfunloadtime = 0;
 
             ////记录正在下载的UnityWebRequest
             //private Dictionary<string, UnityWebRequest> mDicLoadingWebRequest = new Dictionary<string, UnityWebRequest>();
